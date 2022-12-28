@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="ReceiverChannel.cs" />
     <Compile Include="RmtChannel.cs" />
+    <Compile Include="RmtChannelSettings.cs" />
     <Compile Include="SourceClock.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RmtCommand.cs" />

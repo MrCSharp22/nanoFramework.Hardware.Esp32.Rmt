@@ -16,6 +16,9 @@ namespace nanoFramework.Hardware.Esp32.Rmt
         #region Fields
 
         [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
+        private ReceiverChannelSettings _settings;
+
+        [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
         private TimeSpan _receiveTimeout = new TimeSpan(0, 0, 1); // 1 sec
 
         #endregion Fields
@@ -28,6 +31,7 @@ namespace nanoFramework.Hardware.Esp32.Rmt
             get => _receiveTimeout;
             set => _receiveTimeout = value;
         }
+
         /// <summary>
         /// Public constructor to create receiver channel object.
         /// </summary>
@@ -41,6 +45,12 @@ namespace nanoFramework.Hardware.Esp32.Rmt
 
             // Initialise channel with GPIO and ring buffer size
             _channel = NativeRxInit(gpio, rmtBufferSize);
+        }
+
+        public ReceiverChannel(ReceiverChannelSettings settings)
+        {
+            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
+            _settings.Channel = NativeRxInit();
         }
 
         /// <summary>
@@ -66,7 +76,6 @@ namespace nanoFramework.Hardware.Esp32.Rmt
         /// <param name="enable">True to Enable filter</param>
         /// <param name="threshold">Pulse width to ignore expressed in number of source clock cycles,
         /// Value between 1-255</param>
-
         public void EnableFilter(bool enable, byte threshold)
         {
             NativeRxEnableFilter(enable, threshold);
@@ -120,6 +129,9 @@ namespace nanoFramework.Hardware.Esp32.Rmt
         #endregion Destructor
 
         #region Native calls
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private extern int NativeRxInit();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         private extern int NativeRxInit(int gpio, int rmtBufferSize);
