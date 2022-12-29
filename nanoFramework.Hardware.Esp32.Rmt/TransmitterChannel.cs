@@ -199,6 +199,9 @@ namespace nanoFramework.Hardware.Esp32.Rmt
             }
         }
 
+        /// <inheritdoc/>
+        public override ChannelMode Mode => ChannelMode.Transmit;
+
         /// <summary>
         /// Serialize commands to rmt_item32_t native byte format
         /// </summary>
