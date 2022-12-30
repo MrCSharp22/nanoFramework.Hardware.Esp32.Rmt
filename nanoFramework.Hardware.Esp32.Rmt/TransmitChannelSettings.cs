@@ -12,15 +12,23 @@ namespace nanoFramework.Hardware.Esp32.Rmt
 	public sealed class TransmitChannelSettings : RmtChannelSettings
 	{
 		private bool enableCarrierWave;
+		private bool carrierLevel;
 		private int carrierWaveFrequency;
 		private byte carrierWaveDutyPercentage;
 		private bool enableLooping;
 		private bool enableIdleLevelOutput;
+		private bool idleLevel;
 
 		/// <summary>
 		/// Enables or disables the carrier wave generator in the RMT Hardware.
 		/// </summary>
 		public bool EnableCarrierWave { get => enableCarrierWave; set => enableCarrierWave = value; }
+
+		/// <summary>
+		/// Gets or sets a value indicating at which level of RMT output is the carrier wave applied.
+		/// <see langword="true" /> = HIGH.
+		/// </summary>
+		public bool CarrierLevel { get => carrierLevel; set => carrierLevel = value; }
 
 		/// <summary>
 		/// Gets or sets the carrier wave frequency.
@@ -43,6 +51,12 @@ namespace nanoFramework.Hardware.Esp32.Rmt
 		public bool EnableIdleLevelOutput { get => enableIdleLevelOutput; set => enableIdleLevelOutput = value; }
 
 		/// <summary>
+		/// Gets or sets a value indicating the RMT idle level.
+		/// <see langword="true" /> = HIGH.
+		/// </summary>
+		public bool IdleLevel { get => idleLevel; set => idleLevel = value; }
+
+		/// <summary>
 		/// Initializes a new instance of the <see cref="TransmitChannelSettings"/> class.
 		/// </summary>
 		/// <param name="channel">The channel number to use. Valid value range is 0 to 7 (inclusive).</param>
@@ -51,11 +65,14 @@ namespace nanoFramework.Hardware.Esp32.Rmt
 		public TransmitChannelSettings(int channel, int pinNumber) : base(channel, pinNumber)
 		{
 			this.EnableCarrierWave = true;
+			this.CarrierLevel = true;
 			this.CarrierWaveFrequency = 38_000;
 			this.CarrierWaveDutyPercentage = 33;
 
 			this.EnableLooping = false;
+
 			this.EnableIdleLevelOutput = true;
+			this.IdleLevel = false;
 		}
 	}
 }

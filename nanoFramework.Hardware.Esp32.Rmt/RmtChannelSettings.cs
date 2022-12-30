@@ -12,6 +12,7 @@ namespace nanoFramework.Hardware.Esp32.Rmt
 		private byte _clockDivider;
 		private byte _numberOfMemoryBlocks;
 		private int _bufferSize;
+		private bool _signalInverterEnabled;
 
 		/// <summary>
 		/// Gets or sets the channel number.
@@ -54,6 +55,12 @@ namespace nanoFramework.Hardware.Esp32.Rmt
 		/// For transmit channels, <see cref="RmtCommand"/>s are automatically copied over to the channel's memory block and written to the transmitter.
 		/// </remarks>
 		public int BufferSize { get => _bufferSize; set => _bufferSize = value; }
+
+		/// <summary>
+		/// Gets or sets a value indicating if the RMT module should invert the incoming/outgoing signal.
+		/// </summary>
+		/// <remarks>This works like an external inverter connected to the GPIO of certain RMT channel.</remarks>
+		public bool SignalInverterEnabled { get => _signalInverterEnabled; set => _signalInverterEnabled = value; }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="RmtChannelSettings"/> class.
