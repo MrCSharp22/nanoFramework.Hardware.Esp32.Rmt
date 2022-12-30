@@ -65,7 +65,7 @@ namespace nanoFramework.Hardware.Esp32.Rmt
 		/// </summary>
 		public bool IsChannelIdle
 		{
-			get => NativeGetIsChannelIdle();
+			get => NativeTxGetIsChannelIdle();
 		}
 
 		/// <summary>
@@ -90,7 +90,7 @@ namespace nanoFramework.Hardware.Esp32.Rmt
 			get => _transmitterChannelSettings.CarrierLevel;
 			set
 			{
-				NativeSetCarrierMode();
+				NativeTxSetCarrierMode();
 				_transmitterChannelSettings.CarrierLevel = value;
 			}
 		}
@@ -104,7 +104,7 @@ namespace nanoFramework.Hardware.Esp32.Rmt
 			get => _transmitterChannelSettings.IdleLevel;
 			set
 			{
-				NativeSetIdleLevel(value);
+				NativeTxSetIdleLevel(value);
 				_transmitterChannelSettings.IdleLevel = value;
 			}
 		}
@@ -128,46 +128,6 @@ namespace nanoFramework.Hardware.Esp32.Rmt
 
 		#region Methods
 
-		///// <summary>
-		///// Configures the carrier's settings.
-		///// </summary>
-		//private void ConfigureCarrier() => NativeSetCarrierMode();
-
-		///// <summary>
-		///// Fill the channel's memory with RmtItems
-		///// </summary>
-		///// <param name="items">Array of items to write to memory</param>
-		///// <param name="offset">Offset index of the channel's memory</param>
-		//private uint FillItems(RmtItem[] items, ushort offset) =>
-		//    NativeTxFillItems(Channel, items, offset);
-
-		///// <summary>
-		///// Start transmitting RmtItems from memory
-		///// </summary>
-		///// <param name="resetIndex">If true, reset the memory index; otherwise continue from the last index in memory</param>
-		//private uint Start(bool resetIndex) =>
-		//    NativeTxStart(Channel, resetIndex);
-
-		///// <summary>
-		///// Stop transmitting RmtItems.
-		///// </summary>
-		//private uint Stop() => NativeTxStop(Channel);
-
-		/// <summary>
-		/// Send the filled RMT commands to the transmitter
-		/// </summary>
-		/// <param name="waitTxDone">If true wait the TX process to end, false function returns without waiting, but if another command is send before the end of the previous process an error will occur.</param>
-		public void Send(bool waitTxDone) => SendData(SerializeCommands(), waitTxDone);
-
-		/// <summary>
-		/// Send a RAW data to RMT module
-		/// </summary>
-		/// <param name="data">byte array of data for tx module ready for native function</param>
-		/// <param name="waitTxDone"></param>
-#pragma warning disable S4200 // Native methods should be wrapped
-		public void SendData(byte[] data, bool waitTxDone) => NativeWriteItems(data, waitTxDone);
-#pragma warning restore S4200 // Native methods should be wrapped
-
 		/// <summary>
 		/// Add new RMT command to the list of commands that will be sent
 		/// </summary>
@@ -184,6 +144,23 @@ namespace nanoFramework.Hardware.Esp32.Rmt
 		{
 			_commands.Clear();
 		}
+
+		/// <summary>
+		/// Send the filled RMT commands to the transmitter
+		/// </summary>
+		/// <param name="waitTxDone">If true wait the TX process to end, false function returns without waiting, but if another command is send before the end of the previous process an error will occur.</param>
+		public void Send(bool waitTxDone)
+			=> SendData(SerializeCommands(), waitTxDone);
+
+		/// <summary>
+		/// Send a RAW data to RMT module
+		/// </summary>
+		/// <param name="data">byte array of data for tx module ready for native function</param>
+		/// <param name="waitTxDone"></param>
+#pragma warning disable S4200 // Native methods should be wrapped
+		public void SendData(byte[] data, bool waitTxDone)
+			=> NativeTxWriteItems(data, waitTxDone);
+#pragma warning restore S4200 // Native methods should be wrapped
 
 		/// <summary>
 		/// Serialize commands to rmt_item32_t native byte format
@@ -226,9 +203,6 @@ namespace nanoFramework.Hardware.Esp32.Rmt
 			return binaryCommands;
 		}
 
-		private uint WaitTxDone(int waitTime) =>
-			NativeWaitTxDone(waitTime);
-
 		#endregion Methods
 
 		#region Destructors
@@ -243,7 +217,7 @@ namespace nanoFramework.Hardware.Esp32.Rmt
 		}
 
 #pragma warning disable S4200 // Native methods should be wrapped
-		protected virtual void Dispose(bool disposing) => NativeDispose();
+		protected virtual void Dispose(bool disposing) => NativeTxDispose();
 #pragma warning restore S4200 // Native methods should be wrapped
 
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
@@ -256,67 +230,22 @@ namespace nanoFramework.Hardware.Esp32.Rmt
 		private extern int NativeTxInit();
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private extern bool NativeGetIsChannelIdle();
+		private extern bool NativeTxGetIsChannelIdle();
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private extern void NativeTxSetLoopingMode(bool enabled);
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private extern void NativeSetCarrierMode();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+		private extern void NativeTxSetCarrierMode();
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private extern void NativeSetIdleLevel(bool value);
-
-		//[MethodImpl(MethodImplOptions.InternalCall)]
-		//private extern uint NativeTxFillItems(int channel, RmtItem[] items, ushort offset);
-
-		//[MethodImpl(MethodImplOptions.InternalCall)]
-		//private extern uint NativeTxStart(int channel, bool resetIndex);
-
-		//[MethodImpl(MethodImplOptions.InternalCall)]
-		//private extern uint NativeTxStop(int channel);
+		private extern void NativeTxSetIdleLevel(bool value);
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private extern uint NativeWriteItems(byte[] items, bool waitTxDone);
+		private extern uint NativeTxWriteItems(byte[] items, bool waitTxDone);
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private extern uint NativeWaitTxDone(int waitType);
-
-		[MethodImpl(MethodImplOptions.InternalCall)]
-		private extern void NativeDispose();
-
-		//[MethodImpl(MethodImplOptions.InternalCall)]
-		//private extern int NativeGetChannelStatus(int channel);
-
-		//[MethodImpl(MethodImplOptions.InternalCall)]
-		//private extern byte NativeGetMemoryBlockNumber(int channel);
-
-		//[MethodImpl(MethodImplOptions.InternalCall)]
-		//private extern bool NativeGetMemoryLowPower(int channel);
-
-		[MethodImpl(MethodImplOptions.InternalCall)]
-		private extern bool NativeGetSourceClock();
-
-		//[MethodImpl(MethodImplOptions.InternalCall)]
-		//private extern void NativeSetMemoryBlockNumber(int channel, byte value);
-
-		//[MethodImpl(MethodImplOptions.InternalCall)]
-		//private extern void NativeSetMemoryLowPower(int channel, bool value);
+		private extern void NativeTxDispose();
 
 		#endregion Stubs
 	}
