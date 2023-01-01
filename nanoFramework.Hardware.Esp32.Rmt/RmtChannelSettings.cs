@@ -79,7 +79,7 @@ namespace nanoFramework.Hardware.Esp32.Rmt
 		/// <exception cref="ArgumentOutOfRangeException"><paramref name="channel"/> must be between 0 and 7.</exception>
 		public RmtChannelSettings(int channel, int pinNumber)
 		{
-			this.Channel = channel >= 0 && channel <= 7 
+			this.Channel = channel <= 7 
 				? channel
 				: throw new ArgumentOutOfRangeException(nameof(channel));
 
